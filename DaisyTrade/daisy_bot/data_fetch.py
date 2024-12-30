@@ -1,13 +1,12 @@
 # data_fetch.py
 
-from binance.client import Client
 from binance_client import get_binance_client
 import config
 
 def fetch_historical_data(symbol=None, interval=None, lookback=None):
     """
     Fetches historical kline (candlestick) data from Binance.
-    Returns a list of lists.
+    Returns a list of lists (raw data).
     """
     if symbol is None:
         symbol = config.SYMBOL
