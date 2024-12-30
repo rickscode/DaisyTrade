@@ -174,4 +174,4 @@ cython_debug/
 
 venv/
 env/
-DaisyTrade_env/
+DaisyTrade_env/.env
