@@ -11,9 +11,9 @@ BINANCE_API_SECRET = os.getenv("BINANCE_API_SECRET")
 
 def fetch_and_save_historical_data(
     symbol="BTCUSDT",
-    interval=Client.KLINE_INTERVAL_1MINUTE,
+    interval=Client.KLINE_INTERVAL_15MINUTE,
     lookback="1 year ago UTC",   # changed from "1 day ago UTC"
-    csv_path="data/BTCUSDT_1m.csv"
+    csv_path="data/BTCUSDT_15m.csv"
 ):
     """
     Fetch historical kline data from Binance and save as CSV.

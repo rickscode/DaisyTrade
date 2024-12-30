@@ -1,31 +1,33 @@
 import pandas as pd
 import vectorbt as vbt
 
-def run_vectorbt_backtest(csv_path="data/BTCUSDT_1m.csv"):
+def run_vectorbt_backtest(csv_path="data/BTCUSDT_15m.csv"):
     """
-    Runs a breakout strategy backtest using vectorbt.
+    Breakout strategy backtest using vectorbt with 15-minute intervals.
     """
     # 1. Load data
     df = pd.read_csv(csv_path, parse_dates=["timestamp"], index_col="timestamp")
     price = df['close']
 
     # 2. Breakout strategy logic
-    lookback = 20  # Lookback period for the breakout
-    range_high = price.rolling(lookback).max().shift(1)  # Highest high in the last 'lookback' periods
-    range_low = price.rolling(lookback).min().shift(1)   # Lowest low in the last 'lookback' periods
+    lookback = 50  # Lookback period for the breakout
+    range_high = price.rolling(lookback).max().shift(1)  # Highest high over lookback period
+    range_low = price.rolling(lookback).min().shift(1)   # Lowest low over lookback period
 
-    entries = price > range_high  # Buy when price breaks above the range
-    exits = price < range_low     # Sell when price drops below the range
+    entries = price > range_high  # Buy signal
+    exits = price < range_low     # Sell signal
 
-    # 3. Build portfolio
+    # 3. Build portfolio with stop-loss and take-profit
     pf = vbt.Portfolio.from_signals(
         close=price,
         entries=entries,
         exits=exits,
-        init_cash=10000.0,  # Starting capital
-        fees=0.001,         # 0.1% fees
-        slippage=0.001,     # 0.1% slippage
-        freq='1min'         # Fixed warning by using '1min' instead of '1T'
+        sl_stop=0.05,  # 5% stop-loss
+        tp_stop=0.005,  # 0.5% take-profit
+        init_cash=10000.0,
+        fees=0.001,  # 0.1% fees
+        slippage=0.001,  # 0.1% slippage
+        freq='15min'  # Using 15-minute intervals
     )
 
     # 4. Print stats
