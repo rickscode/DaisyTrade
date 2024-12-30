@@ -1,36 +1,34 @@
-# main.py
+import pandas as pd
+import vectorbt as vbt
 
-from data_fetch import fetch_historical_data
-from data_processing import process_data
-from indicators import add_indicators
-from strategy import simple_strategy
+def run_vectorbt_backtest(csv_path="data/BTCUSDT_1m.csv"):
+    """
+    Loads OHLCV data from CSV and performs a simple vectorbt backtest.
+    """
+    # 1. Load data
+    df = pd.read_csv(csv_path, parse_dates=["timestamp"], index_col="timestamp")
+    price = df['close']
 
-def run_bot():
-    # 1. Fetch raw data
-    raw_data = fetch_historical_data()
-    if not raw_data:
-        print("No data fetched. Check your API config or internet connection.")
-        return
+    # 2. Create simple entry/exit signals
+    entries = price > price.shift(1)  # Buy when today's close > yesterday's close
+    exits = price < price.shift(1)    # Sell when today's close < yesterday's close
 
-    # 2. Process into a DataFrame
-    df = process_data(raw_data)
-    print(f"Number of rows fetched: {len(df)}")
-    if df.empty:
-        print("DataFrame is empty. Exiting.")
-        return
+    # 3. Build portfolio
+    pf = vbt.Portfolio.from_signals(
+        close=price,
+        entries=entries,
+        exits=exits,
+        init_cash=10000.0,  # starting capital
+        fees=0.001,         # 0.1% fees
+        slippage=0.001,     # 0.1% slippage
+        freq='1T'           # 1-minute data
+    )
 
-    # Debug print sample
-    print("Data sample:\n", df.head())
+    # 4. Print stats
+    print(pf.stats())
 
-    # 3. Add indicators (e.g., RSI)
-    df = add_indicators(df)
-    print("\nLast 5 rows with RSI:\n", df[['close', 'RSI']].tail())
-
-    # 4. Run the strategy
-    trades = simple_strategy(df, profit_target=0.005)  # 0.5% target
-    print("\nTrade Signals:")
-    for trade in trades:
-        print(trade)
+    # 5. Plot
+    pf.plot().show()
 
 if __name__ == "__main__":
-    run_bot()
+    run_vectorbt_backtest()

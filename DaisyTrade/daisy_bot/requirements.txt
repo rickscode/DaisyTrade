@@ -3,3 +3,4 @@ pandas
 numpy
 TA-Lib
 python-dotenv
+vectorbt
