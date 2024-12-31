@@ -11,7 +11,7 @@ BINANCE_API_SECRET = os.getenv("BINANCE_API_SECRET")
 
 def fetch_and_save_historical_data(
     symbol="BTCUSDT",
-    interval=Client.KLINE_INTERVAL_1DAY,
+    interval=Client.KLINE_INTERVAL_1HOUR,
     lookback="1 year ago UTC",   # changed from "1 day ago UTC"
     csv_path="data/BTCUSDT_1h.csv"
 ):
