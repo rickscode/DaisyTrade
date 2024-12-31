@@ -4,4 +4,7 @@ numpy
 TA-Lib
 python-dotenv
 vectorbt
-pandas_ta
+matplotlib
+plotly
+requests
+groq
